@@ -1,6 +1,7 @@
 package com.example.autogaze;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,13 +19,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = "AutogazeMain";
 
     private void init() throws IOException {
         int btStatus = 1;
-
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             // Device doesn't support Bluetooth
@@ -33,15 +35,35 @@ public class MainActivity extends AppCompatActivity
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, btStatus);
             if (btStatus == RESULT_CANCELED) {
-                Log.e("Error", " error");
+                //Maybe warn the user too? idk
+                Log.e(TAG, " error");
+            }
+        }
+        /* Device discovery would go here if we wanted to deal with that */
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+        if (pairedDevices.size() > 0) {
+            // There are paired devices. Get the name and address of each paired device.
+            for (BluetoothDevice device : pairedDevices) {
+                String deviceName = device.getName();
+                if(deviceName.contentEquals("raspberrypi")) {
+                    ConnectThread my_dude = new ConnectThread(device, bluetoothAdapter);
+                    my_dude.run();
+                }
+                String deviceHardwareAddress = device.getAddress(); // MAC address
             }
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        try {
+            init();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
