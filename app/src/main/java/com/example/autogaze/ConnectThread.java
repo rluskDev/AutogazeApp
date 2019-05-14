@@ -41,6 +41,7 @@ public class ConnectThread extends Thread {
             // until it succeeds or throws an exception.
 
             /*The problem occurs here*/
+
             mmSocket.connect();
             Log.e(TAG, "You connected!");
 
