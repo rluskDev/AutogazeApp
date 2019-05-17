@@ -21,6 +21,7 @@ import android.view.Menu;
 import java.io.IOException;
 import java.util.Set;
 
+//TODO: Make the app not crash as soon as it connects. Add stops in code to help with debugging.
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "AutogazeMain";
@@ -46,11 +47,10 @@ public class MainActivity extends AppCompatActivity
             // There are paired devices. Get the name and address of each paired device.
             for (BluetoothDevice device : pairedDevices) {
                 String deviceName = device.getName();
-                if(deviceName.contentEquals("raspberrypi")) {
+                if(deviceName.contentEquals("ronnie")) {
                     ConnectThread my_dude = new ConnectThread(device, bluetoothAdapter);
                     my_dude.run();
                 }
-                String deviceHardwareAddress = device.getAddress(); // MAC address
             }
         }
     }

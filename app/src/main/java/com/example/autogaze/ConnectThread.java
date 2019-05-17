@@ -16,7 +16,7 @@ public class ConnectThread extends Thread {
     private final BluetoothAdapter mmAdapter;
 
     private static final String TAG = "AutogazeConnect";
-    private static final UUID MY_UUID = UUID.fromString("c4e9fdf7-8711-403c-aa44-85b791bef4d3");
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     public ConnectThread(BluetoothDevice device, BluetoothAdapter adapter) {
         // Use a temporary object that is later assigned to mmSocket
@@ -37,10 +37,6 @@ public class ConnectThread extends Thread {
     public void run() {
         mmAdapter.cancelDiscovery();
         try {
-            // Connect to the remote device through the socket. This call blocks
-            // until it succeeds or throws an exception.
-
-            /*The problem occurs here*/
 
             mmSocket.connect();
             Log.e(TAG, "You connected!");
@@ -57,13 +53,14 @@ public class ConnectThread extends Thread {
             return;
         }
 
+
         // The connection attempt succeeded. Perform work associated with
         // the connection in a separate thread.
         MyBluetoothService my_guy = new MyBluetoothService();
-        MyBluetoothService.ConnectedThread piThread = my_guy.new ConnectedThread(mmSocket);
-        piThread.run();
-        String testString = "Test String";
-        piThread.write(testString.getBytes());
+        MyBluetoothService.ConnectedThread piThread = my_guy.new ConnectedThread(mmSocket, mmDevice);
+        String test = "We're sending data!";
+        byte[] buff = test.getBytes();
+        piThread.write(buff);
     }
 
     // Closes the client socket and causes the thread to finish.

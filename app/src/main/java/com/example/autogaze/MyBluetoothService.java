@@ -1,6 +1,7 @@
 package com.example.autogaze;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,12 +28,15 @@ public class MyBluetoothService {
 
     public class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
+        private final BluetoothDevice mmDevice;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
         private byte[] mmBuffer; // mmBuffer store for the stream
 
-        public ConnectedThread(BluetoothSocket socket) {
+        public ConnectedThread(BluetoothSocket socket, BluetoothDevice device) {
+            Log.d(TAG, "connected");
             mmSocket = socket;
+            mmDevice = device;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
@@ -54,6 +58,7 @@ public class MyBluetoothService {
         }
 
         public void run() {
+            Log.i(TAG, "run ConnectedThread");
             mmBuffer = new byte[1024];
             int numBytes; // bytes returned from read()
 
@@ -80,10 +85,11 @@ public class MyBluetoothService {
                 mmOutStream.write(bytes);
 
                 // Share the sent message with the UI activity.
+                //TODO: Fix error cause this handler points to nothing and creates a NullPointerException
                 Message writtenMsg = handler.obtainMessage(
                         MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
                 writtenMsg.sendToTarget();
-                Log.e(TAG, "You sent stuff 3!");
+                Log.e(TAG, "You sent stuff!");
 
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when sending data", e);
