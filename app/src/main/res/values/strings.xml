@@ -10,7 +10,11 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
+    <string name="preset1">Preset 1</string>
+    <string name="preset2">Preset 2</string>
+    <string name="preset3">Preset 3</string>
+    <string name="preset4">Preset 4</string>
+    <string name="preset5">Preset 5</string>
     <string name="menu_share">Share</string>
-    <string name="menu_send">Send</string>
+    <string name="menu_send">Apply Settings</string>
 </resources>

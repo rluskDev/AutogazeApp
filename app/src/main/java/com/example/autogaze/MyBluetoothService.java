@@ -28,15 +28,13 @@ public class MyBluetoothService {
 
     public class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
         private byte[] mmBuffer; // mmBuffer store for the stream
 
-        public ConnectedThread(BluetoothSocket socket, BluetoothDevice device) {
+        public ConnectedThread(BluetoothSocket socket) {
             Log.d(TAG, "connected");
             mmSocket = socket;
-            mmDevice = device;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
 
@@ -86,9 +84,9 @@ public class MyBluetoothService {
 
                 // Share the sent message with the UI activity.
                 //TODO: Fix error cause this handler points to nothing and creates a NullPointerException
-                Message writtenMsg = handler.obtainMessage(
-                        MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
-                writtenMsg.sendToTarget();
+                //Message writtenMsg = handler.obtainMessage(
+                       // MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
+               // writtenMsg.sendToTarget();
                 Log.e(TAG, "You sent stuff!");
 
             } catch (IOException e) {

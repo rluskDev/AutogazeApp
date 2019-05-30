@@ -53,14 +53,6 @@ public class ConnectThread extends Thread {
             return;
         }
 
-
-        // The connection attempt succeeded. Perform work associated with
-        // the connection in a separate thread.
-        MyBluetoothService my_guy = new MyBluetoothService();
-        MyBluetoothService.ConnectedThread piThread = my_guy.new ConnectedThread(mmSocket, mmDevice);
-        String test = "We're sending data!";
-        byte[] buff = test.getBytes();
-        piThread.write(buff);
     }
 
     // Closes the client socket and causes the thread to finish.
@@ -70,5 +62,9 @@ public class ConnectThread extends Thread {
         } catch (IOException e) {
             Log.e(TAG, "Could not close the client socket", e);
         }
+    }
+
+    public BluetoothSocket getSocket() {
+        return mmSocket;
     }
 }

@@ -2,6 +2,7 @@ package com.example.autogaze;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,12 +22,13 @@ import android.view.Menu;
 import java.io.IOException;
 import java.util.Set;
 
-//TODO: Make the app not crash as soon as it connects. Add stops in code to help with debugging.
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "AutogazeMain";
+    private static String Name = "ronnie";
+    private BluetoothSocket socket;
 
-    private void init() throws IOException {
+    private void connect(String Name) throws IOException {
         int btStatus = 1;
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
@@ -47,27 +49,23 @@ public class MainActivity extends AppCompatActivity
             // There are paired devices. Get the name and address of each paired device.
             for (BluetoothDevice device : pairedDevices) {
                 String deviceName = device.getName();
-                if(deviceName.contentEquals("ronnie")) {
+                if(deviceName.contentEquals(Name)) {
                     ConnectThread my_dude = new ConnectThread(device, bluetoothAdapter);
+                    socket = my_dude.getSocket();
                     my_dude.run();
                 }
             }
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            init();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
+        
+        /*FloatingActionButton fab = findViewById(R.id.fab);
         //make the button toggle bluetooth or something? btw the snackbar is the action that makes
         //text pop up. It's not the button itself. You need to replace the snackbar action.
         fab.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +74,8 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        }); */
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -84,6 +83,12 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
+        try {
+            connect(Name);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -118,24 +123,41 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    //TODO: Make 5 preset buttons (ideally on main screen), then have connect and disconnect (gotta refactor)
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        String preset;
 
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        //Perform work associated with the connection in a separate thread.
+        MyBluetoothService my_guy = new MyBluetoothService();
+        MyBluetoothService.ConnectedThread piThread = my_guy.new ConnectedThread(socket);
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_preset1) {
+            preset = "1";
+            byte[] buff = preset.getBytes();
+            piThread.write(buff);
+        }
+        else if (id == R.id.nav_preset2) {
+            preset = "2";
+            byte[] buff = preset.getBytes();
+            piThread.write(buff);
+        }
+        else if (id == R.id.nav_preset3) {
+            preset = "3";
+            byte[] buff = preset.getBytes();
+            piThread.write(buff);
+        }
+        else if (id == R.id.nav_preset4) {
+            preset = "4";
+            byte[] buff = preset.getBytes();
+            piThread.write(buff);
+        }
+        else if (id == R.id.nav_preset5) {
+            preset = "5";
+            byte[] buff = preset.getBytes();
+            piThread.write(buff);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -143,3 +165,14 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 }
+
+/* <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/menu_send" />
+        </menu>
+    </item> */
+
+
